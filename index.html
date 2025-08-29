@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constelación Corazón Ajustado</title>
+<title>Constelación Corazón Final</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
@@ -43,14 +43,14 @@
     transform: translate(-50%, -50%);
     color: #ec4899;
     font-family: 'Pacifico', cursive;
-    font-size: 1.2em;
+    font-size: 1.1em;
     text-align:center;
     pointer-events:auto;
   }
 
   #btn {
     position: absolute;
-    bottom: 40px; /* subido para verse mejor en móvil */
+    bottom: 100px; /* visible en móvil */
     right: 20px;
     padding:8px 16px;
     font-size:1em;
@@ -106,9 +106,9 @@ for(let i=0;i<totalStars;i++){
   });
 }
 
-// Coordenadas corazón (escala reducida)
+// Coordenadas corazón
 function heartPos(t){
-  const scale = canvas.width < 500 ? 14 : 18; // más pequeño
+  const scale = canvas.width < 500 ? 12 : 16;
   const offsetX = canvas.width/2;
   const offsetY = canvas.height/2;
   const x = 16*Math.pow(Math.sin(t),3);
@@ -121,11 +121,11 @@ for(let i=0;i<heartStarsCount;i++){
   const t = (i/heartStarsCount)*Math.PI*2;
   const pos = heartPos(t);
   heartStars.push({
-    x: canvas.width/2 + (Math.random()-0.5)*25,
-    y: canvas.height/2 + (Math.random()-0.5)*25,
+    x: canvas.width/2 + (Math.random()-0.5)*20,
+    y: canvas.height/2 + (Math.random()-0.5)*20,
     targetX: pos.x,
     targetY: pos.y,
-    size: Math.random()*1.5+1,
+    size: Math.random()*1.2+0.8,
     opacity: Math.random()
   });
 }
@@ -133,7 +133,6 @@ for(let i=0;i<heartStarsCount;i++){
 function drawStars(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // estrellas aleatorias
   stars.forEach(s=>{
     s.opacity += (Math.random()-0.5)*0.05;
     if(s.opacity>1)s.opacity=1;
@@ -159,7 +158,6 @@ function drawStars(){
     ctx.fill();
   });
 
-  // corazón
   heartStars.forEach(s=>{
     s.x += (s.targetX - s.x)*0.02;
     s.y += (s.targetY - s.y)*0.02;
@@ -194,10 +192,12 @@ function animate(){
 animate();
 
 function irASorpresita(){
-  window.location.href = "https://nosoymacs.github.io/detallito/"; // cambia por tu enlace
+  window.location.href = "https://nosoymacs.github.io/detallito/"; // tu enlace agregado
 }
 </script>
 
 </body>
 </html>
+
+
 
