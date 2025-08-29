@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constelación Corazón Aleatoria</title>
+<title>Constelación Corazón Reducida</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
@@ -43,7 +43,7 @@
     transform: translate(-50%, -50%);
     color: #ec4899;
     font-family: 'Pacifico', cursive;
-    font-size: 1.5em;
+    font-size: 1.2em; /* reducción del 20% */
     text-align:center;
     opacity:1;
     pointer-events:auto;
@@ -52,13 +52,13 @@
 
   #btn {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding:10px 20px;
-    font-size:1.2em;
+    bottom: 10px; /* más arriba para verse mejor en móvil */
+    right: 10px;
+    padding:8px 16px; /* reducción 20% */
+    font-size:1em; /* reducción 20% */
     border:none;
     border-radius:8px;
-    background:#1e40af; /* azul */
+    background:#1e40af;
     color:#fff;
     cursor:pointer;
     opacity:1;
@@ -96,12 +96,12 @@ document.addEventListener('mousemove', e => {
 });
 
 // CONFIGURACIÓN
-const totalStars = 500; // estrellas totales aleatorias
+const totalStars = 500;
 const heartStarsCount = 200;
 const stars = [];
 const heartStars = [];
 
-// Generar estrellas totalmente aleatorias
+// Estrellas totalmente aleatorias
 for(let i=0;i<totalStars;i++){
   stars.push({
     x: Math.random()*canvas.width,
@@ -114,8 +114,8 @@ for(let i=0;i<totalStars;i++){
   });
 }
 
-// Función coordenadas corazón
-function heartPos(t, scale=canvas.width < 500 ? 20 : 25, offsetX=canvas.width/2, offsetY=canvas.height/2){
+// Coordenadas corazón (escala reducida 20%)
+function heartPos(t, scale=canvas.width < 500 ? 16 : 20, offsetX=canvas.width/2, offsetY=canvas.height/2){
   const x = 16*Math.pow(Math.sin(t),3);
   const y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
   return {x: offsetX + x*scale, y: offsetY + y*scale};
@@ -126,11 +126,11 @@ for(let i=0;i<heartStarsCount;i++){
   const t = (i/heartStarsCount)*Math.PI*2;
   const pos = heartPos(t);
   heartStars.push({
-    x: canvas.width/2 + (Math.random()-0.5)*40,
-    y: canvas.height/2 + (Math.random()-0.5)*40,
+    x: canvas.width/2 + (Math.random()-0.5)*32, // reducción 20%
+    y: canvas.height/2 + (Math.random()-0.5)*32,
     targetX: pos.x,
     targetY: pos.y,
-    size: Math.random()*2+1.5,
+    size: Math.random()*2+1.2, // reducción 20%
     color:'#ec4899',
     opacity: Math.random()
   });
@@ -140,13 +140,12 @@ for(let i=0;i<heartStarsCount;i++){
 function drawStars(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  // todas las estrellas aleatorias
+  // estrellas aleatorias
   stars.forEach(s=>{
     s.opacity += (Math.random()-0.5)*0.05;
     if(s.opacity>1) s.opacity=1;
     if(s.opacity<0.2) s.opacity=0.2;
 
-    // efecto sutil cursor
     const dx = s.origX - mouse.x;
     const dy = s.origY - mouse.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
@@ -208,4 +207,5 @@ function irASorpresita(){
 
 </body>
 </html>
+
 
