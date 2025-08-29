@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constelación Corazón Ultimate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+  body {
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:sans-serif;
+    position: relative;
+    height: 100vh;
+  }
+
+  canvas {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:block;
+    z-index: 1;
+  }
+
+  .overlay {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:2;
+    pointer-events:none;
+  }
+
+  #message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ec4899;
+    font-family: 'Pacifico', cursive;
+    font-size: 2em;
+    text-align:center;
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  #btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding:10px 20px;
+    font-size:1.2em;
+    border:none;
+    border-radius:8px;
+    background:#1e40af; /* azul */
+    color:#fff;
+    cursor:pointer;
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  #btn:hover {
+    transform: scale(1.1);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="overlay">
+  <div id="message">nomás por bonita</div>
+  <button id="btn" onclick="irASorpresita()">Click para sorpresita</button>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const mouse = {x: -1000, y: -1000};
+document.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+// CONFIGURACIÓN
+const outsideStarsCount = 300;
+const heartStarsCount = 200;
+const outsideStars = [];
+const heartStars = [];
+
+// Función coordenadas corazón (escala más pequeña)
+function heartPos(t, scale=25, offsetX=canvas.width/2, offsetY=canvas.height/2){
+  const x = 16*Math.pow(Math.sin(t),3);
+  const y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+  return {x: offsetX + x*scale, y: offsetY + y*scale};
+}
+
+// Estrellas fuera del corazón
+for(let i=0;i<outsideStarsCount;i++){
+  let star = {x:0,y:0,size:Math.random()*2+1,color:'#fff',opacity:Math.random(), origX:0, origY:0};
+  let inHeart = true;
+  while(inHeart){
+    star.x = Math.random()*canvas.width;
+    star.y = Math.random()*canvas.height;
+    star.origX = star.x;
+    star.origY = star.y;
+    const dx = star.x - canvas.width/2;
+    const dy = star.y - canvas.height/2;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist>150) inHeart=false;
+  }
+  outsideStars.push(star);
+}
+
+// Estrellas del corazón (perímetro más definido)
+for(let i=0;i<heartStarsCount;i++){
+  const t = (i/heartStarsCount)*Math.PI*2;
+  const pos = heartPos(t, 25, canvas.width/2, canvas.height/2); // escala menor
+  heartStars.push({
+    x: canvas.width/2 + (Math.random()-0.5)*40,
+    y: canvas.height/2 + (Math.random()-0.5)*40,
+    targetX: pos.x,
+    targetY: pos.y,
+    size: Math.random()*2+1.5,
+    color:'#ec4899',
+    opacity: Math.random()
+  });
+}
+
+// Dibujar y actualizar estrellas
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // estrellas fuera del corazón
+  outsideStars.forEach(s=>{
+    s.opacity += (Math.random()-0.5)*0.05;
+    if(s.opacity>1) s.opacity=1;
+    if(s.opacity<0.2) s.opacity=0.2;
+
+    const dx = s.origX - mouse.x;
+    const dy = s.origY - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const maxEffect = 15;
+    if(dist < 150){
+      const angle = Math.atan2(dy, dx);
+      const force = (150-dist)/150 * maxEffect;
+      s.x = s.origX + Math.cos(angle)*force*0.15;
+      s.y = s.origY + Math.sin(angle)*force*0.15;
+    } else {
+      s.x += (s.origX - s.x)*0.05;
+      s.y += (s.origY - s.y)*0.05;
+    }
+
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+    ctx.fill();
+  });
+
+  // estrellas del corazón
+  heartStars.forEach(s=>{
+    s.x += (s.targetX - s.x)*0.02;
+    s.y += (s.targetY - s.y)*0.02;
+
+    s.opacity += (Math.random()-0.5)*0.05;
+    if(s.opacity>1) s.opacity=1;
+    if(s.opacity<0.2) s.opacity=0.2;
+
+    const dx = s.targetX - mouse.x;
+    const dy = s.targetY - mouse.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const maxEffect = 10;
+    if(dist < 150){
+      const angle = Math.atan2(dy, dx);
+      const force = (150-dist)/150 * maxEffect;
+      s.x = s.targetX + Math.cos(angle)*force*0.15;
+      s.y = s.targetY + Math.sin(angle)*force*0.15;
+    }
+
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fillStyle = `rgba(236,72,153,${s.opacity})`;
+    ctx.fill();
+  });
+}
+
+function animate(){
+  drawStars();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+function irASorpresita(){
+  window.location.href = "https://nosoymacs.github.io/detallito/"; // Cambia por tu enlace
+}
+</script>
+
+</body>
+</html>
+
