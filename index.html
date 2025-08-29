@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constelación Corazón Reducida</title>
+<title>Constelación Corazón Ajustado</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
@@ -12,8 +12,8 @@
     background:#000;
     overflow:hidden;
     font-family:sans-serif;
-    position: relative;
     height: 100vh;
+    position: relative;
   }
 
   canvas {
@@ -23,7 +23,7 @@
     width:100%;
     height:100%;
     display:block;
-    z-index: 1;
+    z-index:1;
   }
 
   .overlay {
@@ -43,25 +43,22 @@
     transform: translate(-50%, -50%);
     color: #ec4899;
     font-family: 'Pacifico', cursive;
-    font-size: 1.2em; /* reducción del 20% */
+    font-size: 1.2em;
     text-align:center;
-    opacity:1;
     pointer-events:auto;
-    word-break: break-word;
   }
 
   #btn {
     position: absolute;
-    bottom: 10px; /* más arriba para verse mejor en móvil */
-    right: 10px;
-    padding:8px 16px; /* reducción 20% */
-    font-size:1em; /* reducción 20% */
+    bottom: 40px; /* subido para verse mejor en móvil */
+    right: 20px;
+    padding:8px 16px;
+    font-size:1em;
     border:none;
     border-radius:8px;
     background:#1e40af;
     color:#fff;
     cursor:pointer;
-    opacity:1;
     pointer-events:auto;
   }
 
@@ -89,33 +86,31 @@ function resizeCanvas(){
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-const mouse = {x: -1000, y: -1000};
-document.addEventListener('mousemove', e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
+const mouse = {x:-1000, y:-1000};
+document.addEventListener('mousemove', e=>{mouse.x=e.clientX; mouse.y=e.clientY;});
 
-// CONFIGURACIÓN
 const totalStars = 500;
-const heartStarsCount = 200;
+const heartStarsCount = 180;
 const stars = [];
 const heartStars = [];
 
-// Estrellas totalmente aleatorias
+// Estrellas aleatorias
 for(let i=0;i<totalStars;i++){
   stars.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
     size: Math.random()*2+1,
-    color: '#fff',
     opacity: Math.random(),
     origX: Math.random()*canvas.width,
     origY: Math.random()*canvas.height
   });
 }
 
-// Coordenadas corazón (escala reducida 20%)
-function heartPos(t, scale=canvas.width < 500 ? 16 : 20, offsetX=canvas.width/2, offsetY=canvas.height/2){
+// Coordenadas corazón (escala reducida)
+function heartPos(t){
+  const scale = canvas.width < 500 ? 14 : 18; // más pequeño
+  const offsetX = canvas.width/2;
+  const offsetY = canvas.height/2;
   const x = 16*Math.pow(Math.sin(t),3);
   const y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
   return {x: offsetX + x*scale, y: offsetY + y*scale};
@@ -126,33 +121,31 @@ for(let i=0;i<heartStarsCount;i++){
   const t = (i/heartStarsCount)*Math.PI*2;
   const pos = heartPos(t);
   heartStars.push({
-    x: canvas.width/2 + (Math.random()-0.5)*32, // reducción 20%
-    y: canvas.height/2 + (Math.random()-0.5)*32,
+    x: canvas.width/2 + (Math.random()-0.5)*25,
+    y: canvas.height/2 + (Math.random()-0.5)*25,
     targetX: pos.x,
     targetY: pos.y,
-    size: Math.random()*2+1.2, // reducción 20%
-    color:'#ec4899',
+    size: Math.random()*1.5+1,
     opacity: Math.random()
   });
 }
 
-// Dibujar estrellas
 function drawStars(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
   // estrellas aleatorias
   stars.forEach(s=>{
     s.opacity += (Math.random()-0.5)*0.05;
-    if(s.opacity>1) s.opacity=1;
-    if(s.opacity<0.2) s.opacity=0.2;
+    if(s.opacity>1)s.opacity=1;
+    if(s.opacity<0.2)s.opacity=0.2;
 
     const dx = s.origX - mouse.x;
     const dy = s.origY - mouse.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
     const maxEffect = 15;
-    if(dist < 150){
+    if(dist<150){
       const angle = Math.atan2(dy, dx);
-      const force = (150-dist)/150 * maxEffect;
+      const force = (150-dist)/150*maxEffect;
       s.x = s.origX + Math.cos(angle)*force*0.15;
       s.y = s.origY + Math.sin(angle)*force*0.15;
     } else {
@@ -172,16 +165,16 @@ function drawStars(){
     s.y += (s.targetY - s.y)*0.02;
 
     s.opacity += (Math.random()-0.5)*0.05;
-    if(s.opacity>1) s.opacity=1;
-    if(s.opacity<0.2) s.opacity=0.2;
+    if(s.opacity>1)s.opacity=1;
+    if(s.opacity<0.2)s.opacity=0.2;
 
     const dx = s.targetX - mouse.x;
     const dy = s.targetY - mouse.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
     const maxEffect = 10;
-    if(dist < 150){
+    if(dist<150){
       const angle = Math.atan2(dy, dx);
-      const force = (150-dist)/150 * maxEffect;
+      const force = (150-dist)/150*maxEffect;
       s.x = s.targetX + Math.cos(angle)*force*0.15;
       s.y = s.targetY + Math.sin(angle)*force*0.15;
     }
@@ -201,11 +194,10 @@ function animate(){
 animate();
 
 function irASorpresita(){
-  window.location.href = "https://nosoymacs.github.io/detallito/"; // Cambia por tu enlace
+  window.location.href = "https://nosoymacs.github.io/detallito/"; // cambia por tu enlace
 }
 </script>
 
 </body>
 </html>
-
 
